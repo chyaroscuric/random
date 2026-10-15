@@ -32,8 +32,8 @@ component. The interface is dark-only.
   --accent-hover: #1e40af;  /* fill on hover (800) */
   --accent-text:  #3b82f6;  /* the accent as text, icon or focus ring on dark (500) */
   --accent-glow:  #60a5fa;  /* loading bar, hovered accent text (400) */
-  --accent-soft:  color-mix(in srgb, var(--accent) 10%, transparent);      /* active nav row */
-  --accent-tint:  color-mix(in srgb, var(--accent) 15%, transparent);      /* callout, chart area */
+  --accent-soft:  color-mix(in srgb, var(--accent) 10%, transparent);      /* active nav row, accent callout */
+  --accent-tint:  color-mix(in srgb, var(--accent) 15%, transparent);      /* chart area, accent badges */
   --accent-edge:  color-mix(in srgb, var(--accent) 20%, transparent);      /* active outline */
   --accent-icon:  color-mix(in srgb, var(--accent-text) 50%, transparent); /* active nav icon */
 
@@ -70,7 +70,7 @@ component. The interface is dark-only.
   --radius-xs:  6px;     /* dropdown menus, tooltips */
   --radius-sm:  8px;     /* inputs, badges, icon buttons */
   --radius-md:  12px;    /* nav rows, tabs, modals, toasts, breadcrumbs, code blocks */
-  --radius-lg:  16px;    /* cards, sections, list rows, tab strip */
+  --radius-lg:  16px;    /* cards, sections, list rows, callouts, tab strip */
   --radius-pill: 9999px; /* buttons, progress bars, avatars */
 }
 
@@ -101,7 +101,7 @@ and nothing outside the accent tokens changes.
   - soft / tint / edge / icon: color-mix, as in the tokens.
 - **What follows the accent:** the filled primary button, links, the active nav row and
   its icon, the active tab underline, focus rings, on-states of toggles, checkboxes and
-  radios, progress bar fills, the top loading bar, callouts, stat values and
+  radios, progress bar fills, the top loading bar, accent callouts, stat values and
   single-series charts.
 - **What never follows it:** status colours, text and surface colours, logos and other
   content imagery.
@@ -119,9 +119,9 @@ and nothing outside the accent tokens changes.
   | 11px | 500 | micro labels, chart axes |
   | 12px | 500–600 | badges, meta, timestamps, tooltips |
   | 13px | 400–500 | dense controls, table cells, toolbar search, code |
-  | 14px | 400–500 | body, inputs, buttons, nav, descriptions |
+  | 14px | 400–600 | body, inputs, buttons, nav, descriptions; callout headings at 600 |
   | 16px | 500–600 | card and section titles, page subtitle, stat labels |
-  | 18px | 600 | callout and modal headings |
+  | 18px | 600 | modal headings |
   | 20px | 600 | page title |
   | 24px | 600 | one headline number per card, max |
 - Weights 400, 500 and 600 only. No italics in interface text.
@@ -196,7 +196,8 @@ they are decoration.
 - Use one outline icon set throughout (e.g. Tabler or Heroicons outline), stroke 1.75,
   currentColor. Never mix sets, mix filled and outline icons, or use emoji as icons.
 - Sizes: 20px in nav, icon buttons and toolbars. 16px inside buttons, inputs, menus,
-  badges and dense rows. 32px only for an empty state.
+  badges and dense rows. 24px only for a callout's status icon. 32px only for an empty
+  state.
 - Colour: icons take the colour of their text. Only status icons use status colours,
   and only active nav icons use the accent (--accent-icon).
 - Gap between icon and label: 8px (10px in nav rows), vertically centred on the text.
@@ -211,9 +212,9 @@ they are decoration.
 - **Buttons where the icon speeds recognition:** create (+), download, upload, start/stop,
   copy, and a trailing ↗ on links that leave the app. Put a 16px icon before the label.
   Most buttons stay text-only; don't give every button an icon.
-- **Status:** a 16px status icon next to the status word in badges, toasts, callouts and
-  inline validation (check = success, triangle = warning, circle-x = error,
-  circle-i = info).
+- **Status:** a 16px status icon next to the status word in badges, toasts and inline
+  validation, and a 24px one at the start of a callout (check = success, triangle =
+  warning, circle-x = error, circle-i = info).
 - **Affordances:** chevrons for expand/collapse and selects, sort arrows in table
   headers, drag handles, the clear (×) in inputs.
 - **Input adornments:** search magnifier, show/hide password, calendar on date fields.
@@ -330,13 +331,22 @@ they are decoration.
   - Below it, a 6px pill bar: --raise-2 track, --accent fill. The fill turns --warning
     above 75% and --danger above 90%.
   - Never show raw units like "4096 MB".
-- **Callout:**
-  - --accent-tint background with a 4px --accent bar on the start edge, radius
-    0 16px 16px 0, 24px padding.
-  - Heading 18px/600 rgb(255 255 255/.9), body 14px rgb(255 255 255/.6).
-  - Status callouts swap in the status colour for the bar and tint, and put a 16px
-    status icon before the heading.
-  - Use at most one per view.
+- **Callout** (banners and notes: announcements, connection errors, "set up your
+  server"):
+  - The card's shape: --radius-lg, 16px padding. No border, no start-edge bar, no ring,
+    no shadow.
+  - One flat fill carries the meaning: a 10% tint of the status colour
+    (`color-mix(in srgb, var(--danger) 10%, transparent)`), --accent-soft for an accent
+    callout, or plain --raise for a neutral one.
+  - Layout: an optional 24px status icon in the status text colour at the start,
+    top-aligned with the heading, then a 12px gap and the text column. Heading 14px/600
+    white, body 14px --text-muted, both on a 20px line height, 4px apart.
+  - Only the fill and the icon take the colour. The text stays on the text ramp.
+  - Actions sit in a row 12px below the text: secondary buttons or text links, or the
+    view's single primary. A dismissible callout has a close icon button at the end,
+    top-aligned with the heading.
+  - Use at most one per view. System banners that stack (announcements, connection
+    errors) sit 16px apart.
 - **Badge:** --radius-sm, 4px × 8px padding, 12px/600.
   - Neutral: --raise-2 background with #f3f4f6 text.
   - Status: the status text colour on a 15% tint of that status colour, always with a
@@ -476,9 +486,9 @@ Every interactive element defines all of these states, using the tokens above:
    - Dialog actions in the dialog footer.
    - Quick actions next to the thing they change.
 8. **Low density without clutter:** group with whitespace, not borders or coloured
-   blocks. Never put a card inside a card. Never give a grouping box both a border and a
-   fill (the callout's accent bar is the only exception). Remove redundant labels,
-   badges, eyebrows and wrappers.
+   blocks. Never put a card inside a card. Never give a box both a border and a fill,
+   callouts included: no start-edge bars or rings on tinted boxes. Remove redundant
+   labels, badges, eyebrows and wrappers.
 
 ## 16. Anti-patterns (never ship these)
 - A ⋮ overflow menu hiding only two or three actions. Show them as icon buttons instead.
@@ -494,6 +504,8 @@ Every interactive element defines all of these states, using the tokens above:
 - A cryptic icon-only button for a rare action, or icons on some items of a group but
   not others.
 - Coloured section headers, eyebrow labels above headings, or "NEW" badges everywhere.
+- Callouts with a coloured start bar, an outline ring or large headings on top of their
+  tint.
 - Hero banners, marketing copy or illustrations inside the working interface.
 - Modals for content that could be inline, and confirmations for reversible actions.
 - Placeholder text used as the label.
